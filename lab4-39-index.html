@@ -184,8 +184,21 @@
         .apply-filters:hover {
             background-color: #664866;
         }
+        
+        .mask {
+            z-index: 50;
+        }
+        
+        .dropdown-menu {
+            z-index: 10;
+        }
+        
         .message-tip {
             z-index: 20;
+        }
+        
+        .fixed-cart {
+            z-index: 60;
         }
     </style>
      <script>
@@ -222,6 +235,7 @@
        </header>
 <div id="main">
     <div class="flex flex flex-col md:flex-row gap-6">
+       
         <div class="left w-full md:w-1/5 lg:w-1/6 z-10">
          <div class="bg-white rounded-lg shadow-sm p-4 sticky top-24">
                 <h2 class="text-lg font-semibold mb-4 pb-2 border-b border-light">图书分类</h2>
@@ -241,6 +255,7 @@
                 </div>
             </div>
             </div>
+      
         <div class="banner flex-1">
          <div class="bg-white rounded-lg shadow-sm p-4 sticky top-24">
             <h2 class="text-lg font-bold mb-4 pb-2 border-b border-light">新书上架</h2>
@@ -249,9 +264,13 @@
                     <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="1" data-price="45">
                         <div class="book-image-container">
                             <img src="./img/追风筝的人.jpg" alt="追风筝的人封面"  title="追风筝的人" class="w-full h-48 object-cover">
+                         
                             <div class="book-overlay">
                                 <div class="overlay-price">¥45</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -278,6 +297,9 @@
                             <div class="book-overlay">
                                 <div class="overlay-price">¥45</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -304,6 +326,9 @@
                             <div class="book-overlay">
                                 <div class="overlay-price">¥45</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -330,6 +355,9 @@
                             <div class="book-overlay">
                                 <div class="overlay-price">¥45</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -367,6 +395,9 @@
                             <div class="book-overlay">
                                 <div class="overlay-price">¥45</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -389,10 +420,13 @@
                     </div>
                     <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="6" data-price="45">
                         <div class="book-image-container">
-                            <img src="./img/百年孤独.jpg" class="w-full h-48 object-cover">
+                            <img src="./img/百年孤独.jpg" alt="百年孤独封面" class="w-full h-48 object-cover">
                             <div class="book-overlay">
                                 <div class="overlay-price">¥45</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -416,10 +450,13 @@
                     
                     <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="7" data-price="29">
                         <div class="book-image-container">
-                            <img src="./img/小王子.jpg"  class="w-full h-48 object-cover">
+                            <img src="./img/小王子.jpg" alt="小王子封面" class="w-full h-48 object-cover">
                             <div class="book-overlay">
                                 <div class="overlay-price">¥29</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -443,10 +480,13 @@
                     
                     <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="8" data-price="36">
                         <div class="book-image-container">
-                            <img src="./img/月亮与六便士.jpg" class="w-full h-48 object-cover">
+                            <img src="./img/月亮与六便士.jpg" alt="月亮与六便士封面" class="w-full h-48 object-cover">
                             <div class="book-overlay">
                                 <div class="overlay-price">¥36</div>
                                 <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     <button class="overlay-btn cart-btn" title="加入购物车">
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
@@ -479,6 +519,25 @@
                     </div>
                     <div class="filter-options" id="filterOptions">
                         <div class="mb-4">
+                            <h3 class="font-medium mb-2">图书分类</h3>
+                            <div class="filter-option">
+                                <input type="checkbox" id="cat1" value="fiction">
+                                <label for="cat1">文学小说</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="cat2" value="history">
+                                <label for="cat2">历史传记</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="cat3" value="science">
+                                <label for="cat3">科普读物</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="cat4" value="children">
+                                <label for="cat4">少儿读物</label>
+                            </div>
+                        </div>
+                        <div class="mb-4">
                             <h3 class="font-medium mb-2">价格范围</h3>
                             <div class="price-range">
                                 <div class="price-inputs">
@@ -499,6 +558,20 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mb-4">
+                            <h3 class="font-medium mb-2">其他条件</h3>
+                            <div class="filter-option">
+                                <input type="checkbox" id="filterNew">
+                                <label for="filterNew">仅看新书</label>
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="filterBestseller">
+                                <label for="filterBestseller">仅看畅销</label>
+                            </div>
+                        </div>
+                        
+                        <button class="apply-filters" id="applyFilters">应用筛选</button>
+                    </div>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm p-4">
                     <h2 class="text-lg font-semibold mb-3">搜索图书</h2>
@@ -534,7 +607,7 @@
                     <h2 class="text-lg font-semibold p-4 border-b border-light">好书推荐</h2>
                     <div class="p-4 space-y-4">
                         <div class="flex gap-3">
-                            <img src="./img/克林索尔的最后夏天.jpg"  class="w-20 h-28 object-cover rounded">
+                            <img src="./img/克林索尔的最后夏天.jpg" alt="克林索尔的最后夏天封面" class="w-20 h-28 object-cover rounded">
                             <div>
                                 <h3 class="font-medium line-clamp-2">克林索尔的最后夏天</h3>
                                 <p class="text-neutral text-sm line-clamp-1">赫尔曼黑塞</p>
@@ -542,7 +615,7 @@
                         </div>
                         
                         <div class="flex gap-3">
-                            <img src="./img/你当像鸟飞往你的山.jpg"  class="w-20 h-28 object-cover rounded">
+                            <img src="./img/你当像鸟飞往你的山.jpg" alt="你当像鸟飞往你的山封面" class="w-20 h-28 object-cover rounded">
                             <div>
                                 <h3 class="font-medium line-clamp-2">你当像鸟飞往你的山</h3>
                                 <p class="text-neutral text-sm line-clamp-1">塔拉韦斯特夫</p>
@@ -564,10 +637,14 @@
             <img id="zoomImage" class="zoom-image" src="" alt="图书大图">
         </div>
     </div>
+    <div id="messageTip" class="message-tip absolute bg-dark text-white px-4 py-2 rounded shadow-lg hidden">
+        加入购物车成功！
+    </div>
     <script>
         const filterTitle = document.getElementById('filterTitle');
         const filterOptions = document.getElementById('filterOptions');
-        const filterChevron = filterTitle.querySelector('.fa-chevron-down');        
+        const filterChevron = filterTitle.querySelector('.fa-chevron-down');
+        
         filterTitle.addEventListener('click', () => {
             filterOptions.classList.toggle('active');
             filterChevron.classList.toggle('rotate-180');
@@ -579,8 +656,16 @@
         const viewBtns = document.querySelectorAll('.view-btn');
         bookCards.forEach(card => {
             card.addEventListener('click', function(e) {
-                if (e.target.closest('button')) return;               
+                if (e.target.closest('button')) return;
                 const imgSrc = this.querySelector('img').src;
+                zoomImage.src = imgSrc;
+                zoomModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; 
+            });
+        });
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const imgSrc = this.closest('.book-image-container').querySelector('img').src;
                 zoomImage.src = imgSrc;
                 zoomModal.style.display = 'flex';
                 document.body.style.overflow = 'hidden'; 
@@ -596,7 +681,23 @@
                 document.body.style.overflow = 'auto'; 
             }
         });
-        const applyFiltersBtn = document.getElementById('applyFilters');       
+        const cartBtns = document.querySelectorAll('.cart-btn');
+        const messageTip = document.getElementById('messageTip');
+        
+        cartBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+                messageTip.textContent = '加入购物车成功！';
+                messageTip.style.display = 'block';
+                messageTip.style.left = (e.clientX - 60) + 'px';
+                messageTip.style.top = (e.clientY - 40) + 'px';
+                setTimeout(() => {
+                    messageTip.style.display = 'none';
+                }, 3000);
+            });
+        });
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        
         applyFiltersBtn.addEventListener('click', () => {
             const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
             const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
@@ -616,6 +717,7 @@
                 minPrice = 50;
                 maxPrice = Infinity;
             }
+            
             bookCards.forEach(card => {
                 const price = parseFloat(card.dataset.price);
                 if (price >= minPrice && price <= maxPrice) {
@@ -629,7 +731,7 @@
             messageTip.style.display = 'block';
             messageTip.style.left = '50%';
             messageTip.style.top = '20px';
-            messageTip.style.transform = 'translateX(-50%)';           
+            messageTip.style.transform = 'translateX(-50%)';
             setTimeout(() => {
                 messageTip.style.display = 'none';
             }, 3000);
