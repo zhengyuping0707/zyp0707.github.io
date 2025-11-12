@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>叮叮图书 - 数字图书展销平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfcfc;
+        }
+        
+        .book-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(28, 28, 28, 0.04);
+        }
+        
+        .category-item {
+            transition: all 0.2s ease;
+        }
+        
+        .category-item:hover {
+            background-color: #f1cdf1;
+            padding-left: 1.25rem;
+        }
+        .book-image-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .book-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: white;
+            gap: 10px;
+        }
+        
+        .book-card:hover .book-overlay {
+            opacity: 1;
+        }
+        
+        .overlay-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .overlay-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .overlay-btn {
+            background-color: white;
+            color: #775777;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .overlay-btn:hover {
+            background-color: #775777;
+            color: white;
+            transform: scale(1.1);
+        }
+        .zoom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        
+        .zoom-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        
+        .zoom-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border: 4px solid white;
+            border-radius: 4px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .filter-options {
+            display: none;
+            padding: 10px 0;
+        }
+        
+        .filter-options.active {
+            display: block;
+        }
+        
+        .price-range {
+            margin: 15px 0;
+        }
+        
+        .price-inputs {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .price-inputs input {
+            width: 50%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .filter-option {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .apply-filters {
+            background-color: #775777;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+        
+        .apply-filters:hover {
+            background-color: #664866;
+        }
+        .mask {
+            z-index: 50;
+        }
+        
+        .dropdown-menu {
+            z-index: 10;
+        }
+        
+        .message-tip {
+            z-index: 20;
+        }
+        
+        .fixed-cart {
+            z-index: 60;
+        }
+        .form-container {
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .input-field {
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            border-color: #775777;
+            box-shadow: 0 0 0 3px rgba(119, 87, 119, 0.1);
+        }
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 20px;
+        }
+        .login-card {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .close-login {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#775777',
+                        secondary: '#7c62da',
+                        neutral: '#64748b',
+                        light: '#f1f5f9',
+                        dark: '#1e293b'
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fa fa-book text-primary text-3xl"></i>
+                    <h1 class="text-2xl font-bold text-primary">叮叮图书</h1>
+                </div>
+                <div class="md:flex space-x-9 items-center">
+                    <a href="#" class="font-medium">首页</a>
+                    <a href="#" class="font-medium">新书上架</a>
+                    <a href="#" class="font-medium">畅销榜单</a>
+                    <a href="#" class="font-medium">促销活动</a>
+                    <a href="#" id="loginLink" class="font-medium text-primary hover:underline">登录/注册</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="login-modal" id="loginModal">
+        <div class="login-card">
+            <button class="close-login" id="closeLogin">&times;</button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-primary">用户登录</h2>
+            <form action="#" method="post" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium mb-1">邮箱</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-neutral"><i class="fa fa-envelope"></i></span>
+                        <input type="email" id="email" name="email" placeholder="请输入邮箱" 
+                            class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium mb-1">密码</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-neutral"><i class="fa fa-lock"></i></span>
+                        <input type="password" id="password" name="password" placeholder="请输入密码" 
+                            class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none">
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" name="remember" class="mr-2">
+                    <label for="remember" class="text-sm">记住我</label>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary/90 transition-colors">
+                    登录
+                </button>
+                <p class="text-center text-sm">
+                    还没有账号？<a href="#" class="text-primary hover:underline">立即注册</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div id="main" class="container mx-auto px-4 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="left w-full md:w-1/5 lg:w-1/6 z-10">
+                <div class="bg-white rounded-lg shadow-sm p-4 sticky top-24">
+                    <h2 class="text-lg font-semibold mb-4 pb-2 border-b border-light">图书分类</h2>
+                    <ul class="space-y-1">
+                        <li><a href="#" class="category-item block py-2 px-3 rounded hover:text-primary">文学小说</a></li>
+                        <li><a href="#" class="category-item block py-2 px-3 rounded hover:text-primary">历史传记</a></li>
+                        <li><a href="#" class="category-item block py-2 px-3 rounded hover:text-primary">科普读物</a></li>
+                        <li><a href="#" class="category-item block py-2 px-3 rounded hover:text-primary">少儿读物</a></li>
+                        <li><a href="#" class="category-item block py-2 px-3 rounded hover:text-primary">教材教辅</a></li>
+                    </ul>
+                    <h2 class="text-xl font-semibold mt-6 mb-4 pb-2 border-b border-light">热门标签</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="#" class="px-3 py-1 bg-light rounded-full text-sm hover:bg-primary hover:text-white transition-colors">科幻</a>
+                        <a href="#" class="px-3 py-1 bg-light rounded-full text-sm hover:bg-primary hover:text-white transition-colors">编程</a>
+                        <a href="#" class="px-3 py-1 bg-light rounded-full text-sm hover:bg-primary hover:text-white transition-colors">美食</a>
+                        <a href="#" class="px-3 py-1 bg-light rounded-full text-sm hover:bg-primary hover:text-white transition-colors">旅行</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="banner flex-1">
+                <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                    <h2 class="text-lg font-bold mb-4 pb-2 border-b border-light">新书上架</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="1" data-price="45">
+                        <div class="book-image-container">
+                            <img src="https://picsum.photos/id/24/300/400" alt="追风筝的人封面"  title="追风筝的人" class="w-full h-48 object-cover">
+                            <div class="book-overlay">
+                                <div class="overlay-price">¥45</div>
+                                <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button class="overlay-btn cart-btn" title="加入购物车">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                    <button class="overlay-btn" title="收藏">
+                                        <i class="fa fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-medium line-clamp-1">追风筝的人</h3>
+                            <p class="text-neutral text-sm line-clamp-1">卡勒德·胡赛尼</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="font-bold text-primary">¥45</span>
+                                <button class="text-primary hover hover:text-secondary transition-colors cart-btn">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="2" data-price="45">
+                        <div class="book-image-container">
+                            <img src="https://picsum.photos/id/20/300/400" alt="解忧杂货店封面"  title="解忧杂货店" class="w-full h-48 object-cover">
+                            <div class="book-overlay">
+                                <div class="overlay-price">¥45</div>
+                                <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button class="overlay-btn cart-btn" title="加入购物车">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                    <button class="overlay-btn" title="收藏">
+                                        <i class="fa fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-medium line-clamp-1">解忧杂货店</h3>
+                            <p class="text-neutral text-sm line-clamp-1">东野圭吾</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="font-bold text-primary">¥45</span>
+                                <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="3" data-price="45">
+                        <div class="book-image-container">
+                            <img src="https://picsum.photos/id/21/300/400" alt="人类简史封面" title="人类简史" class="w-full h-48 object-cover">
+                            <div class="book-overlay">
+                                <div class="overlay-price">¥45</div>
+                                <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button class="overlay-btn cart-btn" title="加入购物车">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                    <button class="overlay-btn" title="收藏">
+                                        <i class="fa fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-medium line-clamp-1">人类简史</h3>
+                            <p class="text-neutral text-sm line-clamp-1">尤瓦尔·赫拉利</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="font-bold text-primary">¥45</span>
+                                <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="4" data-price="45">
+                        <div class="book-image-container">
+                            <img src="./img/活着.jpg"  alt="活着封面" title="活着" class="w-full h-48 object-cover">
+                            <div class="book-overlay">
+                                <div class="overlay-price">¥45</div>
+                                <div class="overlay-actions">
+                                    <button class="overlay-btn view-btn" title="快速查看">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button class="overlay-btn cart-btn" title="加入购物车">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                    <button class="overlay-btn" title="收藏">
+                                        <i class="fa fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-medium line-clamp-1">活着</h3>
+                            <p class="text-neutral text-sm line-clamp-1">余华</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="font-bold text-primary">¥45</span>
+                                <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="mt-10">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">畅销图书</h2>
+                        <a href="#" class="text-primary hover:hover:underline flex items-center">
+                            查看更多 <i class="fa fa-angle-right ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">            
+                        <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden overflow-hidden relative z-1" data-id="5" data-price="45">
+                            <div class="book-image-container">
+                                <img src="https://picsum.photos/id/23/300/400" alt="三体封面" title="三体" class="w-full h-48 object-cover">
+                                <div class="book-overlay">
+                                    <div class="overlay-price">¥45</div>
+                                    <div class="overlay-actions">
+                                        <button class="overlay-btn view-btn" title="快速查看">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                        <button class="overlay-btn cart-btn" title="加入购物车">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </button>
+                                        <button class="overlay-btn" title="收藏">
+                                            <i class="fa fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="font-medium line-clamp-1">三体</h3>
+                                <p class="text-neutral neutral text-sm line-clamp-1">刘慈欣</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="font-bold text-primary">¥45</span>
+                                    <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="6" data-price="45">
+                            <div class="book-image-container">
+                                <img src="https://picsum.photos/id/25/300/400" alt="百年孤独封面" class="w-full h-48 object-cover">
+                                <div class="book-overlay">
+                                    <div class="overlay-price">¥45</div>
+                                    <div class="overlay-actions">
+                                        <button class="overlay-btn view-btn" title="快速查看">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                        <button class="overlay-btn cart-btn" title="加入购物车">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </button>
+                                        <button class="overlay-btn" title="收藏">
+                                            <i class="fa fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="font-medium line-clamp-1">百年孤独</h3>
+                                <p class="text-neutral text-sm line-clamp-1">加西亚·马尔克斯</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="font-bold text-primary">¥45</span>
+                                    <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="7" data-price="29">
+                            <div class="book-image-container">
+                                <img src="https://picsum.photos/id/26/300/400" alt="小王子封面" class="w-full h-48 object-cover">
+                                <div class="book-overlay">
+                                    <div class="overlay-price">¥29</div>
+                                    <div class="overlay-actions">
+                                        <button class="overlay-btn view-btn" title="快速查看">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                        <button class="overlay-btn cart-btn" title="加入购物车">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </button>
+                                        <button class="overlay-btn" title="收藏">
+                                            <i class="fa fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="font-medium line-clamp-1">小王子</h3>
+                                <p class="text-neutral text-sm line-clamp-1">安托万·德·圣埃克苏佩里</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="font-bold text-primary">¥29</span>
+                                    <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="book-card bg-white rounded-lg shadow-sm overflow-hidden relative z-1" data-id="8" data-price="36">
+                            <div class="book-image-container">
+                                <img src="https://picsum.photos/id/27/300/400" alt="月亮与六便士封面" class="w-full h-48 object-cover">
+                                <div class="book-overlay">
+                                    <div class="overlay-price">¥36</div>
+                                    <div class="overlay-actions">
+                                        <button class="overlay-btn view-btn" title="快速查看">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                        <button class="overlay-btn cart-btn" title="加入购物车">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </button>
+                                        <button class="overlay-btn" title="收藏">
+                                            <i class="fa fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <h3 class="font-medium line-clamp-1">月亮与六便士</h3>
+                                <p class="text-neutral text-sm line-clamp-1">毛姆</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="font-bold text-primary">¥36</span>
+                                    <button class="text-primary hover:text-secondary transition-colors cart-btn">
+                                        <i class="fa fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="bg-white rounded-lg shadow-sm p-6 mt-10 form-container">
+                    <h2 class="text-xl font-bold mb-4 text-primary">图书推荐订阅</h2>
+                    <form action="#" method="post" enctype="multipart/form-data" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="username" class="block text-sm font-medium mb-1">用户名</label>
+                                <input type="text" id="username" name="username" placeholder="请输入用户名" 
+                                    class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="subPassword" class="block text-sm font-medium mb-1">密码</label>
+                                <input type="password" id="subPassword" name="subPassword" placeholder="请输入密码" 
+                                    class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="subEmail" class="block text-sm font-medium mb-1">邮箱</label>
+                            <input type="email" id="subEmail" name="subEmail" placeholder="请输入邮箱地址" 
+                                class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">性别</label>
+                            <div class="flex space-x-4">
+                                <div class="flex items-center">
+                                    <input type="radio" id="male" name="gender" value="male" class="mr-2">
+                                    <label for="male">男</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="female" name="gender" value="female" class="mr-2">
+                                    <label for="female">女</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">兴趣分类</label>
+                            <div class="flex flex-wrap gap-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="interest1" name="interest" value="fiction" class="mr-2">
+                                    <label for="interest1">文学小说</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="interest2" name="interest" value="history" class="mr-2">
+                                    <label for="interest2">历史传记</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="interest3" name="interest" value="science" class="mr-2">
+                                    <label for="interest3">科普读物</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="interest4" name="interest" value="children" class="mr-2">
+                                    <label for="interest4">少儿读物</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="bookCategory" class="block text-sm font-medium mb-1">图书分类</label>
+                            <select id="bookCategory" name="bookCategory" class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                                <option value="">请选择分类</option>
+                                <option value="fiction">文学小说</option>
+                                <option value="history">历史传记</option>
+                                <option value="science">科普读物</option>
+                                <option value="children">少儿读物</option>
+                                <option value="textbook">教材教辅</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium mb-1">订阅留言</label>
+                            <textarea id="message" name="message" rows="4" placeholder="请输入您的订阅需求..." 
+                                class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label for="avatar" class="block text-sm font-medium mb-1">上传头像</label>
+                            <input type="file" id="avatar" name="avatar" accept="image/*"
+                                class="input-field w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none">
+                        </div>
+                        <div class="flex space-x-3">
+                            <button type="submit" class="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-primary/90 transition-colors">
+                                提交订阅
+                            </button>
+                            <button type="reset" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors">
+                                重置表单
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <div class="right w-full md:w-1/5 lg:w-2/6 z-10">
+                <div class="space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm p-4 filter-section">
+                        <div class="filter-title" id="filterTitle">
+                            <h2 class="text-lg font-semibold">筛选条件</h2>
+                            <i class="fa fa-chevron-down transition-transform duration-300"></i>
+                        </div>
+                        <div class="filter-options" id="filterOptions">
+                            <div class="mb-4">
+                                <h3 class="font-medium mb-2">图书分类</h3>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="cat1" value="fiction">
+                                    <label for="cat1">文学小说</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="cat2" value="history">
+                                    <label for="cat2">历史传记</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="cat3" value="science">
+                                    <label for="cat3">科普读物</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="cat4" value="children">
+                                    <label for="cat4">少儿读物</label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h3 class="font-medium mb-2">价格范围</h3>
+                                <div class="price-range">
+                                    <div class="price-inputs">
+                                        <input type="number" id="minPrice" placeholder="最低" min="0">
+                                        <input type="number" id="maxPrice" placeholder="最高" min="0">
+                                    </div>
+                                    <div class="filter-option">
+                                        <input type="radio" name="priceRange" id="price1" value="0-30">
+                                        <label for="price1">0-30元</label>
+                                    </div>
+                                    <div class="filter-option">
+                                        <input type="radio" name="priceRange" id="price2" value="30-50">
+                                        <label for="price2">30-50元</label>
+                                    </div>
+                                    <div class="filter-option">
+                                        <input type="radio" name="priceRange" id="price3" value="50+">
+                                        <label for="price3">50元以上</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h3 class="font-medium mb-2">其他条件</h3>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="filterNew">
+                                    <label for="filterNew">仅看新书</label>
+                                </div>
+                                <div class="filter-option">
+                                    <input type="checkbox" id="filterBestseller">
+                                    <label for="filterBestseller">仅看畅销</label>
+                                </div>
+                            </div>
+                            
+                            <button class="apply-filters" id="applyFilters">应用筛选</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <h2 class="text-lg font-semibold mb-3">搜索图书</h2>
+                        <div class="flex">
+                            <input type="text" placeholder="输入书名或作者" 
+                                class="flex-1 border border-light rounded-l-lg px-3 py-2 focus:outline-none focus:border-primary">
+                            <button class="bg-primary text-white px-4 rounded-r-lg hover:bg-primary/90 transition-colors">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <p class="text-sm text-neutral mb-2">热门搜索：</p>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="#" class="text-sm hover:text-primary">围城</a>
+                                <a href="#" class="text-sm hover:text-primary">哈利波特</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <h2 class="text-lg font-semibold p-4 border-b border-light">促销活动</h2>
+                        <div class="p-4">
+                            <div class="bg-light rounded-lg p-3 mb-3">
+                                <p class="font-medium text-secondary mb-1">满减活动</p>
+                                <p class="text-sm text-neutral">满100减20，满200减50</p>
+                            </div>
+                            <div class="bg-light rounded-lg p-3 mb-3">
+                                <p class="font-medium text-secondary mb-1">新用户专享</p>
+                                <p class="text-sm text-neutral">首次下单立减15元，再送5元优惠券</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <h2 class="text-lg font-semibold p-4 border-b border-light">好书推荐</h2>
+                        <div class="p-4 space-y-4">
+                            <div class="flex gap-3">
+                                <img src="https://picsum.photos/id/28/100/140" alt="克林索尔的最后夏天封面" class="w-20 h-28 object-cover rounded">
+                                <div>
+                                    <h3 class="font-medium line-clamp-2">克林索尔的最后夏天</h3>
+                                    <p class="text-neutral text-sm line-clamp-1">赫尔曼黑塞</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-3">
+                                <img src="https://picsum.photos/id/29/100/140" alt="你当像鸟飞往你的山封面" class="w-20 h-28 object-cover rounded">
+                                <div>
+                                    <h3 class="font-medium line-clamp-2">你当像鸟飞往你的山</h3>
+                                    <p class="text-neutral text-sm line-clamp-1">塔拉韦斯特夫</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fixed-cart fixed bottom-6 right-6 bg-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 transition-all">
+        <i class="fa fa-shopping-cart text-xl"></i>
+    </div>
+    <div id="zoomModal" class="zoom-modal">
+        <div class="zoom-content">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            <img id="zoomImage" class="zoom-image" src="" alt="图书大图">
+        </div>
+    </div>
+    <div id="messageTip" class="message-tip absolute bg-dark text-white px-4 py-2 rounded shadow-lg hidden">
+        加入购物车成功！
+    </div>
+    <script>
+        const filterTitle = document.getElementById('filterTitle');
+        const filterOptions = document.getElementById('filterOptions');
+        const filterChevron = filterTitle.querySelector('.fa-chevron-down');
+        
+        filterTitle.addEventListener('click', () => {
+            filterOptions.classList.toggle('active');
+            filterChevron.classList.toggle('rotate-180');
+        });
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomImage = document.getElementById('zoomImage');
+        const closeBtn = document.getElementById('closeBtn');
+        const bookCards = document.querySelectorAll('.book-card');
+        const viewBtns = document.querySelectorAll('.view-btn');
+        bookCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('button')) return;
+                const imgSrc = this.querySelector('img').src;
+                zoomImage.src = imgSrc;
+                zoomModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; 
+            });
+        });
+        viewBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const imgSrc = this.closest('.book-image-container').querySelector('img').src;
+                zoomImage.src = imgSrc;
+                zoomModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; 
+            });
+        });
+        closeBtn.addEventListener('click', () => {
+            zoomModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; 
+        });
+        
+        zoomModal.addEventListener('click', function(e) {
+            if (e.target === zoomModal) {
+                zoomModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; 
+            }
+        });
+        const cartBtns = document.querySelectorAll('.cart-btn');
+        const messageTip = document.getElementById('messageTip');
+        
+        cartBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+                messageTip.textContent = '加入购物车成功！';
+                messageTip.style.display = 'block';
+                messageTip.style.left = (e.clientX - 60) + 'px';
+                messageTip.style.top = (e.clientY - 40) + 'px';
+                setTimeout(() => {
+                    messageTip.style.display = 'none';
+                }, 3000);
+            });
+        });
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        applyFiltersBtn.addEventListener('click', () => {
+            let minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+            let maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+            let priceRangeValue = '';
+            
+            document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
+                if (radio.checked) {
+                    priceRangeValue = radio.value;
+                }
+            });
+            if (priceRangeValue === '0-30') {
+                minPrice = 0;
+                maxPrice = 30;
+            } else if (priceRangeValue === '30-50') {
+                minPrice = 30;
+                maxPrice = 50;
+            } else if (priceRangeValue === '50+') {
+                minPrice = 50;
+                maxPrice = Infinity;
+            }
+            bookCards.forEach(card => {
+                const price = parseFloat(card.dataset.price);
+                if (price >= minPrice && price <= maxPrice) {
+                    card.style.display = ''; 
+                } else {
+                    card.style.display = 'none'; 
+                }
+            });
+            const visibleBooks = document.querySelectorAll('.book-card:not([style*="display: none"])').length;
+            messageTip.textContent = `已筛选出 ${visibleBooks} 本图书`;
+            messageTip.style.display = 'block';
+            messageTip.style.left = '50%';
+            messageTip.style.top = '20px';
+            messageTip.style.transform = 'translateX(-50%)';
+            
+            setTimeout(() => {
+                messageTip.style.display = 'none';
+            }, 3000);
+        });
+        const loginLink = document.getElementById('loginLink');
+        const loginModal = document.getElementById('loginModal');
+        const closeLogin = document.getElementById('closeLogin');
+        
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+        closeLogin.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>
